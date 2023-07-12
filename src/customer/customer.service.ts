@@ -4,21 +4,11 @@ import { CustomerEntity } from './customer.entity';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './product.entity';
 import { OrderEntity } from './order.entity';
-import { genSalt, hash, compare } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { CustomerDTO, userDTO } from './customer.dto';
 
 @Injectable()
-export class CustomerService {
-    login(query: userDTO) {
-        throw new Error('Method not implemented.');
-    }
-    registerCustomer(customer: CustomerDTO) {
-        throw new Error('Method not implemented.');
-    }
-}
- 
-@Controller('customer')
-export class CustomerController {
+export class CustomerService{
     constructor(
         @InjectRepository(CustomerEntity)
         private customerRepository: Repository<CustomerEntity>,
@@ -28,38 +18,38 @@ export class CustomerController {
         private orderRepository: Repository<OrderEntity>
     ) {}
 
+
     //registration
 
     async registerCustomer(customer: CustomerDTO): Promise<CustomerEntity> {
-        const salt = await genSalt();
-        customer.password = await hash(customer.password, salt);
+        const salt = await bcrypt.genSalt();
+        customer.password = await bcrypt.hash(customer.password, salt);
         return await this.customerRepository.save(customer);
 
 
     }
 
-        // Log in
-        async login(query:userDTO)
-        {
-            const email = query.email;
-            const password = query.password;
-            const customerDetails = await this.customerRepository.findOneBy({ email : email });        
-            if (customerDetails === null) {
-                throw new NotFoundException({
-                    status: HttpStatus.NOT_FOUND,
-                    message: "customer not found"
-                })
+    // Log in
+    async login(query: userDTO) {
+        const email = query.email;
+        const password = query.password;
+        const customerDetails = await this.customerRepository.findOneBy({ email: email });
+        if (customerDetails === null) {
+            throw new NotFoundException({
+                status: HttpStatus.NOT_FOUND,
+                message: "customer not found"
+            })
+        } else {
+            if (await bcrypt.compare(password, customerDetails.password)) {
+                return customerDetails;
             } else {
-                if (await compare(password, customerDetails.password)) {
-                    return customerDetails;
-                } else {
-                    throw new UnauthorizedException({
-                        status: HttpStatus.UNAUTHORIZED,
-                        message: "Password does not match"
-                    })
-                }
+                throw new UnauthorizedException({
+                    status: HttpStatus.UNAUTHORIZED,
+                    message: "Password does not match"
+                })
             }
         }
-    
-    
+    }
+
+
 }

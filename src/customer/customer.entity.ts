@@ -11,7 +11,7 @@ export class CustomerEntity {
     firstName: string;
 
     @Column({ name: 'last_name', type: 'varchar', length: 255 })
-    lastname: string;
+    lastName: string;
 
     @Column({ name: 'data_of_birth', type: 'date' })
     dataofBirth: string;
