@@ -33,7 +33,7 @@ export class OrderEntity{
     shippingAddress: string;
 
 
-    @ManyToOne(()=> CustomerEntity, customer  => customer.orders)
+    @ManyToOne(()=> CustomerEntity, customer  => customer.orders, { onDelete: "SET NULL" } )
     customer: CustomerEntity;
 
 }

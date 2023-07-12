@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { CustomerDTO, userDTO } from './customer.dto';
 
 @Injectable()
-export class CustomerService{
+export class CustomerService {
     constructor(
         @InjectRepository(CustomerEntity)
         private customerRepository: Repository<CustomerEntity>,
@@ -16,14 +16,13 @@ export class CustomerService{
         private productRepository: Repository<ProductEntity>,
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>
-    ) {}
+    ) { }
 
 
     //registration
 
     async registerCustomer(customer: CustomerDTO): Promise<CustomerEntity> {
-        const salt = await bcrypt.genSalt();
-        customer.password = await bcrypt.hash(customer.password, salt);
+        const salt = 25 ;            
         return await this.customerRepository.save(customer);
 
 
@@ -34,13 +33,13 @@ export class CustomerService{
         const email = query.email;
         const password = query.password;
         const customerDetails = await this.customerRepository.findOneBy({ email: email });
-        if (customerDetails === null) {
+        /*if (customerDetails === null) {
             throw new NotFoundException({
                 status: HttpStatus.NOT_FOUND,
                 message: "customer not found"
             })
         } else {
-            if (await bcrypt.compare(password, customerDetails.password)) {
+            if (password === customerDetails.password) {
                 return customerDetails;
             } else {
                 throw new UnauthorizedException({
@@ -48,7 +47,9 @@ export class CustomerService{
                     message: "Password does not match"
                 })
             }
-        }
+        }*/
+        console.log(customerDetails);
+        return customerDetails;
     }
 
 

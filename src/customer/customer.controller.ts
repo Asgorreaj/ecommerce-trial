@@ -45,11 +45,22 @@ export class CustomerController {
 
         const customerDetails = await this.customerService.registerCustomer(customer);
 
-        session['customerID'] = customerDetails['customerID'];
-        session['email'] = customerDetails['email'];
-        session['profilePicture'] = customerDetails['profilePicture'];
+        session.customerID = customerDetails.customerID;
+        session.email = customerDetails.email;
+        session.profilePicture = customerDetails.profilePicture;
 
         return "Registration successful";
+    }
+
+
+    //Log in
+    @Post('/login')
+    async login(@Query() query: userDTO, @Session() session) {
+        const customerDetails = await this.customerService.login(query);
+        session.customerID = customerDetails.customerID;
+        session.email = customerDetails.email;
+        session.profilePicture = customerDetails.profilePicture;
+        return "Login successfull";
     }
 
 
